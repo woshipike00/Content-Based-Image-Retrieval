@@ -3,6 +3,7 @@ package pike;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -24,7 +25,7 @@ public class ImagesSearcher {
 		this.indexpath=indexpath;
 	}
 	
-	public void search(String imgpath) throws IOException{
+	public ArrayList<String> search(String imgpath,int type) throws IOException{
 		File imgfile=new File(imgpath);
 		if (!imgfile.exists()){
 			System.out.println("image does not exist");
@@ -34,55 +35,50 @@ public class ImagesSearcher {
 		BufferedImage image=ImageIO.read(imgfile);
 		IndexReader indexReader=DirectoryReader.open(FSDirectory.open(new File(indexpath)));
 		
-		ImageSearcher searcher_0=ImageSearcherFactory.createCEDDImageSearcher(10);
-		ImageSearcher searcher_1=ImageSearcherFactory.createFCTHImageSearcher(10);
-		ImageSearcher searcher_2=ImageSearcherFactory.createGaborImageSearcher(10);
-		ImageSearcher searcher_3=ImageSearcherFactory.createJCDImageSearcher(10);
-		ImageSearcher searcher_4=ImageSearcherFactory.createTamuraImageSearcher(10);
-
+		ImageSearcher searcher=null;
+		ImageSearchHits hits=null;
+		switch(type){
+		case 0:
+			searcher=ImageSearcherFactory.createCEDDImageSearcher(9);
+			hits=searcher.search(image, indexReader);
+			break;
+		case 1:
+			searcher=ImageSearcherFactory.createFCTHImageSearcher(9);
+			hits=searcher.search(image, indexReader);
+			break;
+		case 2:
+			searcher=ImageSearcherFactory.createGaborImageSearcher(9);
+			hits=searcher.search(image, indexReader);
+			break;
+		case 3:
+			searcher=ImageSearcherFactory.createJCDImageSearcher(9);
+			hits=searcher.search(image, indexReader);
+			break;
+		}
 		
+		return getHits(hits);
 		
-		
-		ImageSearchHits hits_0=searcher_0.search(image, indexReader);
-		getHits(hits_0);
-		
-		System.out.println("----------------------------------------\n");
-		
-		ImageSearchHits hits_1=searcher_1.search(image, indexReader);
-		getHits(hits_1);
-		
-		System.out.println("----------------------------------------\n");
-		
-		ImageSearchHits hits_2=searcher_2.search(image, indexReader);
-		getHits(hits_2);
-		
-		System.out.println("----------------------------------------\n");
-		
-		ImageSearchHits hits_3=searcher_3.search(image, indexReader);
-		getHits(hits_3);
-		
-		System.out.println("----------------------------------------\n");
-		
-		ImageSearchHits hits_4=searcher_4.search(image, indexReader);
-		getHits(hits_4);
 	}
 	
-	public void getHits(ImageSearchHits hits){
+	public ArrayList<String> getHits(ImageSearchHits hits){
+		ArrayList<String> result=new ArrayList<String>();
 		for (int i=0;i<hits.length();i++){
 			String filename=hits.doc(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+			result.add(filename);
 			String[] splits=filename.split("/");
 			System.out.println(splits[splits.length-1]);
 		}
+		return result;
 	}
 	
 	public static void main(String[] args) throws IOException{
-		//IndexCreator indexCreator=new IndexCreator("/Users/pike/Downloads/icpr2004.imgset/groundtruth", "index");
-		//indexCreator.createIndex();
+		IndexCreator indexCreator=new IndexCreator("/Users/pike/Downloads/icpr2004.imgset/groundtruth", "index");
+		indexCreator.createIndex();
 		ImagesSearcher searcher=new ImagesSearcher("index");
 		
 		//searcher.search("/Users/pike/Downloads/icpr2004.imgset/groundtruth/football/football08.jpg");
 		//searcher.search("/Users/pike/Downloads/icpr2004.imgset/groundtruth/cherries/cherries05.jpg");
-		searcher.search("/Users/pike/Downloads/icpr2004.imgset/groundtruth/swissmountains/swissmountains30.jpg");
+		searcher.search("/Users/pike/Downloads/icpr2004.imgset/groundtruth/swissmountains/swissmountains30.jpg",0);
 		
 
 	}

@@ -33,6 +33,12 @@ public class IndexCreator {
 	
 	public void createIndex() throws IOException{
 		
+		File indexfile=new File(index_path);
+		if(indexfile.exists()){
+			System.out.println("index has been created");
+			return;
+		}
+		
 		
 		File imgfile=new File(pic_directory_path);
 		if(imgfile.exists() && imgfile.isDirectory())
@@ -43,6 +49,8 @@ public class IndexCreator {
 		//get all images 
 		ArrayList<String> imagelist=FileUtils.getAllImages(imgfile, true);
 		//System.out.println(imagelist.size());
+		
+		
 		
 		docbuilder=getDocumentBuilder();
 		IndexWriterConfig config=new IndexWriterConfig(Version.LUCENE_CURRENT, new SimpleAnalyzer(Version.LUCENE_CURRENT));
