@@ -75,8 +75,6 @@ public class IndexCreator {
 	public ChainedDocumentBuilder getDocumentBuilder(){
 		ChainedDocumentBuilder docbuilder=new ChainedDocumentBuilder();
 		docbuilder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-		//docbuilder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-		//docbuilder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 		docbuilder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 		docbuilder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 		docbuilder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
